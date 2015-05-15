@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Doctrine\ORM\EntityManager;
 /**
  * OutputManager
- * 
+ *
  * Class used to process console output (including traditional)
  *
  * Created      03/26/2015
@@ -20,7 +20,7 @@ class OutputManager extends ContainerAware
 
     /**
      * The entity manager
-     * @var EntityManager 
+     * @var EntityManager
      */
     protected $EntityManager;
 
@@ -60,7 +60,7 @@ class OutputManager extends ContainerAware
 
         $this->EntityManager->persist($terminalLog);
         $this->EntityManager->flush($terminalLog);
-        
+
         if ($terminalLog->isHasError()) {
             $this->sendMail($terminalLog);
         }
@@ -96,7 +96,7 @@ class OutputManager extends ContainerAware
                 )
             );
 
-            // \Swift_Mailer $mailer 
+            // \Swift_Mailer $mailer
             $mailer = $this->container->get('mailer');
 
             //send the message.
@@ -106,7 +106,7 @@ class OutputManager extends ContainerAware
             $spool = $mailer->getTransport()->getSpool();
             $transport = $this->container->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
-            
+
         } catch (\Exception $e) {
             //prevent looping.
             $this->container->get('exs.exception_listener')->onAnyException($e);

@@ -8,9 +8,9 @@ use EXS\TerminalBundle\Entity\Repository\CommandLockRepository;
 use EXS\TerminalBundle\Exception\CommandIsInterruptedException;
 /*
  * Description of CommandLockManager
- * 
+ *
  * Handles the actual writing to logs
- * 
+ *
  * Created      03/26/2015
  * @author      Charles Weiss & Mathieu Delisle
  * @copyright   Copyright 2015 ExSitu Marketing.
@@ -32,7 +32,7 @@ class CommandLockManager
 
     /**
      * Constructor
-     * 
+     *
      * @param EntityManager         $entityManager
      * @param CommandLockRepository $commandLockRepository
      */

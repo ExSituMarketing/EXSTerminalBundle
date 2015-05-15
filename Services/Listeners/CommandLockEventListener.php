@@ -16,10 +16,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /*
  * Description of CommandLockEventListener
- * 
+ *
  * Listens for lock parameters in console commands
  * Prevents the same command from running concurrently.
- * 
+ *
  * Created      03/26/2015
  * @author      Charles Weiss & Mathieu Delisle
  * @copyright   Copyright 2015 ExSitu Marketing.
@@ -118,7 +118,7 @@ class CommandLockEventListener implements EventSubscriberInterface
     public function onConsoleCommandException(ConsoleExceptionEvent $event)
     {
         $lockName = $this->getLockname($event);
-        
+
         if (strlen($lockName) > 0) {
             $commandLock = $this->commandLockManager->get($lockName);
             $commandLock->setHasError(true);
