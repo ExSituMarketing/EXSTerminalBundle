@@ -1,0 +1,26 @@
+{
+    "name": "exs/terminal-bundle",
+    "type": "symfony-bundle",
+    "description": "Terminal command logging bundle for Symfony2",
+    "keywords": ["error", "logging", "bundle", "exception", "command", "lock", "crontab", "concurrent"],
+    "homepage": "https://github.com/ExSituMarketing/EXSTerminalBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Charles Weiss",
+            "email": "charles@ex-situ.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2"
+    },
+    "require-dev": {
+        "symfony/framework-bundle": ">=2.1,<=2.7-dev",
+        "exs/error-bundle": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "EXS\\TerminalBundle": "" }
+    },
+    "minimum-stability": "dev",
+    "target-dir": "EXS/TerminalBundle"
+}
