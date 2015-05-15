@@ -60,6 +60,11 @@ php app/console doctrine:schema:update --force
 Lastly, copy the including bash file: "runner" from the vendor/exs/terminal-bundle/EXS/TerminalBundle/runner to app/runner
 That adds the hooks into the original console script without altering the original.
 
+```
+cp vendor/exs/terminal-bundle/EXS/TerminalBundle/runner app/runner
+```
+
+
 and now you're done.
 
 If you want to test them try opening up the same command in two terminals simultaneously. They currently run for 3 seconds each:
