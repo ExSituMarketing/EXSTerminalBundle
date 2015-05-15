@@ -31,8 +31,8 @@ php composer.phar update
 ```
 Composer will now update all dependencies and you should see our bundle in the list:
 ``` shell
-  - Installing exs/terminal-bundle (dev-master 0c644b1)
-    Cloning 0c644b1315e75cd4ff521eeea0ee3243faad0ce3
+  - Installing exs/terminal-bundle (dev-master 463eb20)
+    Cloning 463eb2081e7205e7556f6f65224c6ba9631e070a
 ```
 
 Update the app/AppKernel.php and app/config/routing.yml to include our bundle, clear the cache and update the schema:
