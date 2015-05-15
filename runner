@@ -57,7 +57,7 @@ if ($outputArg == 'db')
     $container = $kernel->getContainer();
 
     //create output object with output manager service.
-    $output = new TerminalOutput($container->get('console.output.manager'));
+    $output = new TerminalOutput($container->get('terminal.output.manager'));
     
     // Does the app need the buffer captured
     ob_start();
