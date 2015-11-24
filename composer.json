@@ -12,15 +12,19 @@
         }
     ],
     "require": {
-        "php": ">=5.3.2"
+        "php": ">=5.3.2",
+        "symfony/symfony": "~2.7",
+        "symfony/framework-bundle": "~2.7",
+        "doctrine/orm": "~2.4",
+        "swiftmailer/swiftmailer": "~5.4"
     },
     "require-dev": {
-        "symfony/framework-bundle": ">=2.1,<=2.7-dev",
         "exs/error-bundle": "dev-master"
     },
     "autoload": {
         "psr-0": { "EXS\\TerminalBundle": "" }
     },
+    "bin": ["bin/runner"],
     "minimum-stability": "dev",
     "target-dir": "EXS/TerminalBundle"
 }

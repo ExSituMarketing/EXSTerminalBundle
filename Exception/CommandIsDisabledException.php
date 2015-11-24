@@ -5,30 +5,34 @@ namespace EXS\TerminalBundle\Exception;
 use EXS\TerminalBundle\Entity\CommandLock;
 
 /**
- * Class CommandIsDisabledException
+ * Class CommandIsDisabledException.
  *
- * Created      03/26/2015
- * @author      Charles Weiss & Mathieu Delisle
- * @copyright   Copyright 2015 ExSitu Marketing.
+ * @created   03/26/2015
+ * @author    Charles Weiss & Mathieu Delisle
+ * @copyright Copyright 2015 ExSitu Marketing.
  */
 class CommandIsDisabledException extends \Exception
 {
     /**
-     * The message template, used to generate the main message string
+     * The message template, used to generate the main message string.
+     *
      * @var string
      */
-    protected $messageTemplate = "Command \"%s\" is disabled in the admin since %s";
+    protected $messageTemplate = 'Command "%s" is disabled in the admin since %s.';
 
     /**
-     * Store the running command object
+     * Currently running CommandLock.
+     *
      * @var CommandLock
      */
     protected $commandLock;
 
     /**
-     * Set the command lock
+     * Sets the command lock.
+     *
      * @param CommandLock $commandLock
-     * @return self
+     *
+     * @return CommandIsDisabledException
      */
     public function setCommandLock(CommandLock $commandLock)
     {
@@ -40,8 +44,7 @@ class CommandIsDisabledException extends \Exception
     }
 
     /**
-     * Update the message
-     * @return void
+     * Updates the message.
      */
     protected function updateMessage()
     {

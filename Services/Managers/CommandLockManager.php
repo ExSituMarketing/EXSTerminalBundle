@@ -6,18 +6,16 @@ use Doctrine\ORM\EntityManager;
 use EXS\TerminalBundle\Entity\CommandLock;
 use EXS\TerminalBundle\Entity\Repository\CommandLockRepository;
 use EXS\TerminalBundle\Exception\CommandIsInterruptedException;
-/*
- * Description of CommandLockManager
- *
+
+/**
  * Handles the actual writing to logs
  *
- * Created      03/26/2015
- * @author      Charles Weiss & Mathieu Delisle
- * @copyright   Copyright 2015 ExSitu Marketing.
+ * @created   03/26/2015
+ * @author    Charles Weiss & Mathieu Delisle
+ * @copyright Copyright 2015 ExSitu Marketing.
  */
 class CommandLockManager
 {
-
     /**
      * The repo
      * @var CommandLockRepository

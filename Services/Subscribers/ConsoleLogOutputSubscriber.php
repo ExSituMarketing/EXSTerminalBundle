@@ -1,4 +1,5 @@
 <?php
+
 namespace  EXS\TerminalBundle\Services\Listeners;
 
 use Doctrine\DBAL\DBALException;
@@ -10,21 +11,20 @@ use Symfony\Component\Console\Event\ConsoleExceptionEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-/*
- * Description of ConsoleLogOutputEventListener
- *
+
+/**
  * Listens for output parameters in console commands
  * Logs all command output to the terminal logs table.
  *
- * Created      03/26/2015
- * @author      Charles Weiss & Mathieu Delisle
- * @copyright   Copyright 2015 ExSitu Marketing.
+ * @reated    03/26/2015
+ * @author    Charles Weiss & Mathieu Delisle
+ * @copyright Copyright 2015 ExSitu Marketing.
  */
-class ConsoleLogOutputEventListener implements EventSubscriberInterface
+class ConsoleLogOutputSubscriber implements EventSubscriberInterface
 {
-
     /**
-     * The exception listener
+     * The exception listener.
+     *
      * @var ExceptionListener
      */
     protected $exceptionListener;
@@ -38,7 +38,8 @@ class ConsoleLogOutputEventListener implements EventSubscriberInterface
     /**
      * Constructor
      *
-     * @param OutputManager $outputManager
+     * @param OutputManager     $outputManager
+     * @param ExceptionListener $exceptionListener
      */
     public function __construct(OutputManager $outputManager, ExceptionListener $exceptionListener)
     {
@@ -105,7 +106,7 @@ class ConsoleLogOutputEventListener implements EventSubscriberInterface
     {
         try {
             //get console ouput.
-            /** @var DoctrineOutput $output */
+            /** @var TerminalOutput $output */
             $output = $event->getOutput();
             $lockName = '';
             if ($output instanceof TerminalOutput) {

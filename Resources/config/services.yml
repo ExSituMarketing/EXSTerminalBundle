@@ -1,31 +1,36 @@
 parameters:
-    terminal.command.lock.repository.class: EXS\TerminalBundle\Entity\Repository\CommandLockRepository
-    terminal.command.lock.manager.class: EXS\TerminalBundle\Services\Managers\CommandLockManager
+    terminal.commandlock.subscriber.class: EXS\TerminalBundle\Services\Subscribers\CommandLockSubscriber
+    terminal.commandlock.manager.class: EXS\TerminalBundle\Services\Managers\CommandLockManager
+    terminal.commandlock.repository.class: EXS\TerminalBundle\Entity\Repository\CommandLockRepository
+    terminal.output.subscriber.class: EXS\TerminalBundle\Services\Subscribers\ConsoleLogOutputSubscriber
     terminal.output.manager.class: EXS\TerminalBundle\Services\Managers\OutputManager
-    terminal.output.listener.class: EXS\TerminalBundle\Services\Listeners\ConsoleLogOutputEventListener
-    terminal.command.lock.listener.class: EXS\TerminalBundle\Services\Listeners\CommandLockEventListener
 
 services:
+    terminal.commandlock.subscriber:
+        class: %terminal.commandlock.subscriber.class%
+        arguments: [ @terminal.commandlock.manager, @exs.exception_subscriber ]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    terminal.commandlock.manager:
+        class: %terminal.commandlock.manager.class%
+        arguments: [ @doctrine.orm.entity_manager, @terminal.commandlock.repository ]
+
     terminal.commandlock.repository:
-        class: %terminal.command.lock.repository.class%
-        arguments: [EXSTerminalBundle:CommandLock]
+        class: %terminal.commandlock.repository.class%
+        arguments: [ 'EXSTerminalBundle:CommandLock' ]
         factory_service: doctrine.orm.entity_manager
         factory_method: getRepository
-    terminal.commandlock.manager:
-        class: %terminal.command.lock.manager.class%
-        arguments: [@doctrine.orm.entity_manager, @terminal.commandlock.repository]
+
+    terminal.output.subscriber:
+        class: %terminal.output.subscriber.class%
+        arguments: [ @terminal.output.manager, @exs.exception_subscriber ]
+        tags:
+            - { name: kernel.event_subscriber }
+
     terminal.output.manager:
         class: %terminal.output.manager.class%
+        arguments: [ %exs_terminal.email% ]
         calls:
-            - [setContainer,[ @service_container ]]
-            - [setManager,[ @doctrine.orm.entity_manager ]]
-    terminal.output.listener:
-        class: %terminal.output.listener.class%
-        arguments: [@terminal.output.manager,@exs.exception_listener]
-        tags:
-            - { name: kernel.event_subscriber }
-    terminal.commandlock.listener:
-        class: %terminal.command.lock.listener.class%
-        arguments: [@terminal.commandlock.manager,@exs.exception_listener]
-        tags:
-            - { name: kernel.event_subscriber }
+            - [ 'setContainer', [ @service_container ] ]
+            - [ 'setManager', [ @doctrine.orm.entity_manager ] ]

@@ -5,19 +5,18 @@ namespace EXS\TerminalBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * CommandLock
- * Created      03/26/2015
- * @author      Charles Weiss & Mathieu Delisle
- * @copyright   Copyright 2015 ExSitu Marketing.
+ * CommandLock class.
  *
+ * @created   03/26/2015
+ * @author    Charles Weiss & Mathieu Delisle
+ * @copyright Copyright 2015 ExSitu Marketing.
  *
- * @ORM\Table(name="commandlocks")
+ * @ORM\Table(name="CommandLock")
  * @ORM\Entity(repositoryClass="EXS\TerminalBundle\Entity\Repository\CommandLockRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class CommandLock
 {
-
     /**
      * @var integer
      *
@@ -30,51 +29,51 @@ class CommandLock
     /**
      * @var integer
      *
-     * @ORM\Column(name="currentPid", type="integer", options={"default"="0"})
+     * @ORM\Column(name="currentPid", type="integer", options={"default": "0"})
      */
-    private $currentPid = 0;
+    private $currentPid;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="hasError", type="boolean")
      */
-    private $hasError = false;
+    private $hasError;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="isActive", type="boolean")
      */
-    private $isActive = true;
+    private $isActive;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="lastError", type="datetime", options={"default"="0000-00-00 00:00:00"})
+     * @ORM\Column(name="lastError", type="datetime", options={"default": "0000-00-00 00:00:00"})
      */
     private $lastError;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="lastRunTime", type="float", options={"default"="0"})
+     * @ORM\Column(name="lastRunTime", type="float", options={"default": "0"})
      */
-    private $lastRunTime = 0;
+    private $lastRunTime;
 
     /**
      * Process name
      *
      * @var string
      *
-     * @ORM\Column(name="lockName", type="string", length=60, options={"comment"="Process name"})
+     * @ORM\Column(name="lockName", type="string", length=60, options={"comment": "Process name"})
      */
     private $lockName;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="lockedSince", type="datetime", options={"default"="0000-00-00 00:00:00"})
+     * @ORM\Column(name="lockedSince", type="datetime", options={"default": "0000-00-00 00:00:00"})
      */
     private $lockedSince;
 
@@ -93,6 +92,13 @@ class CommandLock
     private $modified;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="notifyOnError", type="boolean", options={"default": "0"})
+     */
+    private $notifyOnError;
+
+    /**
      * The constructor
      *
      * Set the created time
@@ -103,6 +109,7 @@ class CommandLock
         $this->setCreated(new \DateTime());
         $this->setModified(new \DateTime());
         $this->setLastError(new \DateTime("0000-00-00 00:00:00"));
+        $this->notifyOnError = false;
     }
 
     /**
@@ -315,6 +322,26 @@ class CommandLock
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getNotifyOnError()
+    {
+        return $this->notifyOnError;
+    }
+
+    /**
+     * @param bool $notifyOnError
+     *
+     * @return $this
+     */
+    public function setNotifyOnError($notifyOnError)
+    {
+        $this->notifyOnError = $notifyOnError;
 
         return $this;
     }

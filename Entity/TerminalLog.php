@@ -5,18 +5,17 @@ namespace EXS\TerminalBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TerminalLog
+ * TerminalLog class.
  *
- * Created      03/26/2015
- * @author      Charles Weiss & Mathieu Delisle
- * @copyright   Copyright 2015 ExSitu Marketing.
+ * @created   03/26/2015
+ * @author    Charles Weiss & Mathieu Delisle
+ * @copyright Copyright 2015 ExSitu Marketing.
  *
- * @ORM\Table(name="terminallogs")
+ * @ORM\Table(name="TerminalLog")
  * @ORM\Entity()
  */
 class TerminalLog
 {
-
     /**
      * @var integer
      *
@@ -31,7 +30,7 @@ class TerminalLog
      *
      * @ORM\Column(name="pid", type="integer")
      */
-    private $pid = 0;
+    private $pid;
 
     /**
      * Process name
@@ -40,21 +39,21 @@ class TerminalLog
      *
      * @ORM\Column(name="lockName", type="string", length=60, options={"comment"="Process name"})
      */
-    private $lockName = "";
+    private $lockName;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="hasError", type="boolean")
      */
-    private $hasError = false;
+    private $hasError;
 
     /**
      * @var string
      *
      * @ORM\Column(name="log", type="text")
      */
-    private $log = "";
+    private $log;
 
     /**
      * @var \DateTime
@@ -63,6 +62,10 @@ class TerminalLog
      */
     private $created;
 
+    /**
+     * @param string $log
+     * @param bool   $newLine
+     */
     public function appendToLog($log = '', $newLine = false)
     {
         $this->log .= $log . ($newLine ? PHP_EOL : '');

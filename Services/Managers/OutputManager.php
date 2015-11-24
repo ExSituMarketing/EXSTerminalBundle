@@ -3,26 +3,39 @@
 namespace EXS\TerminalBundle\Services\Managers;
 
 use EXS\TerminalBundle\Entity\CommandLock;
+use EXS\TerminalBundle\Entity\Repository\CommandLockRepository;
 use EXS\TerminalBundle\Entity\TerminalLog;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Doctrine\ORM\EntityManager;
+
 /**
- * OutputManager
+ * OutputManager processes console output (including traditional).
  *
- * Class used to process console output (including traditional)
- *
- * Created      03/26/2015
- * @author      Charles Weiss & Mathieu Delisle
- * @copyright   Copyright 2015 ExSitu Marketing.
+ * @created   03/26/2015
+ * @author    Charles Weiss & Mathieu Delisle
+ * @copyright Copyright 2015 ExSitu Marketing.
  */
 class OutputManager extends ContainerAware
 {
-
     /**
      * The entity manager
+     *
      * @var EntityManager
      */
     protected $EntityManager;
+
+    /**
+     * @var array
+     */
+    private $emailParameters;
+
+    /**
+     * @param array $emailParameters
+     */
+    public function __construct(array $emailParameters)
+    {
+        $this->emailParameters = $emailParameters;
+    }
 
     /**
      * Setter for the em
@@ -67,46 +80,54 @@ class OutputManager extends ContainerAware
     }
 
     /**
-     * Send an email
+     * Sends an email.
+     *
      * @param TerminalLog $terminalLog
      */
     protected function sendMail(TerminalLog $terminalLog)
     {
         try {
             //get associated log.
-            // CommandLockRepository $commandLockRepo
-            $commandLockRepo = $this->EntityManager->getRepository("EXSTerminalBundle:CommandLock");
+            /** @var CommandLockRepository $commandLockRepo */
+            $commandLockRepo = $this->EntityManager->getRepository('EXSTerminalBundle:CommandLock');
             if (strlen($terminalLog->getLockName()) > 0) {
                 $commandLock = $commandLockRepo->getCommandLockByName($terminalLog->getLockName());
             } else {
                 $commandLock = new CommandLock();
-                $commandLock->setLockName("NoLockNameError");
+                $commandLock->setLockName('NoLockNameError');
+            }
+
+            if (false === $commandLock->getNotifyOnError()) {
+                return;
             }
 
             //build the message.
             $message = \Swift_Message::newInstance()
-                ->setSubject($this->container->getParameter('exs.emails.error.subject') . ' ' . $commandLock->getLockName())
-                ->setFrom($this->container->getParameter('exs.emails.error.from'))
-                ->setTo($this->container->getParameter('exs.emails.error.to'))
-                ->setBody(
-                $this->container->get('templating')->render(
-                    'EXSTerminalBundle:Email:onConsoleException.txt.twig', array(
-                    'command' => $commandLock,
-                    "log" => $terminalLog)
-                )
-            );
+                ->setSubject(sprintf(
+                    '%s %s',
+                    $this->emailParameters['subject'],
+                    $commandLock->getLockName()
+                ))
+                ->setFrom($this->emailParameters['from'])
+                ->setTo($this->emailParameters['to'])
+                ->setBody($this->container->get('templating')->render(
+                    'EXSTerminalBundle:Email:onConsoleException.txt.twig',
+                    array(
+                        'command' => $commandLock,
+                        'log' => $terminalLog,
+                    )
+                ));
 
-            // \Swift_Mailer $mailer
+            /** @var \Swift_Mailer $mailer */
             $mailer = $this->container->get('mailer');
 
             //send the message.
-            $sent = $mailer->send($message);
+            $mailer->send($message);
 
             // Flush the spool explicitely
             $spool = $mailer->getTransport()->getSpool();
             $transport = $this->container->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
-
         } catch (\Exception $e) {
             //prevent looping.
             $this->container->get('exs.exception_listener')->onAnyException($e);

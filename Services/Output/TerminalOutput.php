@@ -35,7 +35,6 @@ use Symfony\Component\Console\Output\StreamOutput;
  */
 class TerminalOutput extends StreamOutput implements ConsoleOutputInterface
 {
-
     /**
      * @var OutputManager
      */
@@ -50,11 +49,16 @@ class TerminalOutput extends StreamOutput implements ConsoleOutputInterface
      * Constructor.
      *
      * @param OutputManager            $outputManager
-     * @param bool|int                 $verbosity
-     * @param null                     $decorated
+     * @param int                      $verbosity
+     * @param bool                     $decorated
      * @param OutputFormatterInterface $formatter
      */
-    public function __construct(OutputManager $outputManager,$verbosity = self::VERBOSITY_NORMAL,$decorated = null,OutputFormatterInterface $formatter = null)
+    public function __construct(
+        OutputManager $outputManager,
+        $verbosity = OutputInterface::VERBOSITY_NORMAL,
+        $decorated = null,
+        OutputFormatterInterface $formatter = null
+    )
     {
         $outputStream = tmpfile();
 
@@ -123,7 +127,7 @@ class TerminalOutput extends StreamOutput implements ConsoleOutputInterface
     /**
      * @param OutputManager $outputManager
      *
-     * @return DoctrineOutput
+     * @return TerminalOutput
      */
     public function setOutputManager(OutputManager $outputManager)
     {

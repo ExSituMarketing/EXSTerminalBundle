@@ -14,19 +14,17 @@ use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 /*
- * Description of CommandLockEventListener
- *
- * Listens for lock parameters in console commands
+ * Listens for lock parameters in console commands.
  * Prevents the same command from running concurrently.
  *
- * Created      03/26/2015
- * @author      Charles Weiss & Mathieu Delisle
- * @copyright   Copyright 2015 ExSitu Marketing.
+ * @created   03/26/2015
+ * @author    Charles Weiss & Mathieu Delisle
+ * @copyright Copyright 2015 ExSitu Marketing.
  */
-class CommandLockEventListener implements EventSubscriberInterface
+class CommandLockSubscriber implements EventSubscriberInterface
 {
-
     /**
      * The lock manager
      * @var CommandLockManager
@@ -40,7 +38,7 @@ class CommandLockEventListener implements EventSubscriberInterface
     protected $exceptionListener;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CommandLockManager $commandLockManager
      * @param ExceptionListener  $exceptionListener
@@ -60,7 +58,10 @@ class CommandLockEventListener implements EventSubscriberInterface
     {
         return array(
             ConsoleEvents::COMMAND => array('onConsoleCommand', 1024),
-            ConsoleEvents::EXCEPTION => array('onConsoleCommandException', 1000),
+            ConsoleEvents::EXCEPTION => array(
+                array('onConsoleCommandException', 1000),
+                array('sendErrorMail', 500),
+            ),
             ConsoleEvents::TERMINATE => array('onConsoleCommandTerminate', 1000),
         );
     }
@@ -222,6 +223,23 @@ class CommandLockEventListener implements EventSubscriberInterface
     public function getLockname($event)
     {
         $lockName = $event->getCommand()->getName();
+
         return $lockName;
+    }
+
+    /**
+     * @param ConsoleExceptionEvent $event
+     */
+    public function sendErrorMail(ConsoleExceptionEvent $event)
+    {
+        $lockName = $this->getLockname($event);
+
+        if (strlen($lockName) > 0) {
+            $commandLock = $this->commandLockManager->get($lockName);
+
+            if (true === $commandLock->getNotifyOnError()) {
+
+            }
+        }
     }
 }
