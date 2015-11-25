@@ -46,13 +46,17 @@ Update the app/AppKernel.php and app/config/routing.yml to include our bundle, c
             new EXS\TerminalBundle\EXSTerminalBundle()
         );
 ```
+
 ```
-#app/config/parameters.yml
+#app/config/comnfig.yml
 #...
-    exs.emails.error.from: sender@example.com
-    exs.emails.error.to: receiver@example.com
-    exs.emails.error.subject: Terminal Error
+exs_terminal:
+    email:
+        from: from@test.tld
+        to: to@test.tld
+        subject: Subject
 ```
+
 ``` shell
 php app/console cache:clear
 php app/console doctrine:schema:update --force

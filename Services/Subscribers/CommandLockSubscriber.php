@@ -239,18 +239,20 @@ class CommandLockSubscriber implements EventSubscriberInterface
         $lockName = $this->getLockname($event);
 
         if (strlen($lockName) > 0) {
-            $output = $event->getOutput();
-
-            if ($output instanceof TerminalOutput) {
-                $terminalLog = $output->getTerminalLog();
-            } else {
-                $terminalLog = new TerminalLog();
-                $terminalLog->setLog('Undefined.');
-            }
-
             $commandLock = $this->commandLockManager->get($lockName);
 
-            $this->emailManager->sendErrorEmail($commandLock, $terminalLog);
+            if (true === $commandLock->getNotifyOnError()) {
+                $output = $event->getOutput();
+
+                if ($output instanceof TerminalOutput) {
+                    $terminalLog = $output->getTerminalLog();
+                } else {
+                    $terminalLog = new TerminalLog();
+                    $terminalLog->setLog('Undefined.');
+                }
+
+                $this->emailManager->sendErrorEmail($commandLock, $terminalLog);
+            }
         }
     }
 }
