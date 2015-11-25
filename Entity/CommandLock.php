@@ -109,7 +109,10 @@ class CommandLock
         $this->setCreated(new \DateTime());
         $this->setModified(new \DateTime());
         $this->setLastError(new \DateTime("0000-00-00 00:00:00"));
-        $this->notifyOnError = false;
+        $this->hasError = false;
+        $this->isActive = true;
+        $this->lastRunTime = 0;
+        $this->notifyOnError = true;
     }
 
     /**

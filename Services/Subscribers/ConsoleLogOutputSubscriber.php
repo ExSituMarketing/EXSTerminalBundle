@@ -88,8 +88,10 @@ class ConsoleLogOutputSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Log the console output
+     * Log the console output.
+     *
      * @param ConsoleTerminateEvent|ConsoleExceptionEvent $event
+     *
      * @throws \Exception
      */
     protected function logConsoleOuput($event)

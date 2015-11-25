@@ -1,4 +1,5 @@
 parameters:
+    terminal.email.manager.class: EXS\TerminalBundle\Services\Subscribers\EmailManager
     terminal.commandlock.subscriber.class: EXS\TerminalBundle\Services\Subscribers\CommandLockSubscriber
     terminal.commandlock.manager.class: EXS\TerminalBundle\Services\Managers\CommandLockManager
     terminal.commandlock.repository.class: EXS\TerminalBundle\Entity\Repository\CommandLockRepository
@@ -6,9 +7,13 @@ parameters:
     terminal.output.manager.class: EXS\TerminalBundle\Services\Managers\OutputManager
 
 services:
+    terminal.email.manager:
+        class: %terminal.email.manager.class%
+        arguments: [ @mailer, @templating, %exs_terminal.email% ]
+
     terminal.commandlock.subscriber:
         class: %terminal.commandlock.subscriber.class%
-        arguments: [ @terminal.commandlock.manager ]
+        arguments: [ @terminal.commandlock.manager, @terminal.email.manager ]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -30,7 +35,6 @@ services:
 
     terminal.output.manager:
         class: %terminal.output.manager.class%
-        arguments: [ %exs_terminal.email% ]
         calls:
             - [ 'setContainer', [ @service_container ] ]
             - [ 'setManagerRegistry', [ @doctrine ] ]

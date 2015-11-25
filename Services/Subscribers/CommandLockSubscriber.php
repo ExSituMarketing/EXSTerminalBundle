@@ -3,9 +3,12 @@
 namespace EXS\TerminalBundle\Services\Subscribers;
 
 use Doctrine\DBAL\DBALException;
+use EXS\TerminalBundle\Entity\TerminalLog;
 use EXS\TerminalBundle\Exception\CommandAlreadyRunningException;
 use EXS\TerminalBundle\Exception\CommandIsDisabledException;
 use EXS\TerminalBundle\Services\Managers\CommandLockManager;
+use EXS\TerminalBundle\Services\Managers\EmailManager;
+use EXS\TerminalBundle\Services\Output\TerminalOutput;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleExceptionEvent;
@@ -31,13 +34,19 @@ class CommandLockSubscriber implements EventSubscriberInterface
     protected $commandLockManager;
 
     /**
+     * @var EmailManager
+     */
+    private $emailManager;
+
+    /**
      * Constructor.
      *
      * @param CommandLockManager $commandLockManager
      */
-    public function __construct(CommandLockManager $commandLockManager)
+    public function __construct(CommandLockManager $commandLockManager, EmailManager $emailManager)
     {
         $this->commandLockManager = $commandLockManager;
+        $this->emailManager = $emailManager;
     }
 
     /**
@@ -51,7 +60,7 @@ class CommandLockSubscriber implements EventSubscriberInterface
             ConsoleEvents::COMMAND => array('onConsoleCommand', 1024),
             ConsoleEvents::EXCEPTION => array(
                 array('onConsoleCommandException', 1000),
-                array('sendErrorMail', 500),
+                array('sendErrorEmail', 500),
             ),
             ConsoleEvents::TERMINATE => array('onConsoleCommandTerminate', 1000),
         );
@@ -102,6 +111,7 @@ class CommandLockSubscriber implements EventSubscriberInterface
 
     /**
      * When console terminate with exception.
+     *
      * @param ConsoleExceptionEvent $event
      */
     public function onConsoleCommandException(ConsoleExceptionEvent $event)
@@ -118,6 +128,7 @@ class CommandLockSubscriber implements EventSubscriberInterface
 
     /**
      * Do we need to close this lock?
+     *
      * @param ConsoleTerminateEvent $event
      */
     public function onConsoleCommandTerminate(ConsoleTerminateEvent $event)
@@ -131,6 +142,7 @@ class CommandLockSubscriber implements EventSubscriberInterface
 
     /**
      * Close the lock gracefully
+     *
      * @param string $lockName
      */
     public function shutDownOnConsoleCommandterminate($lockName)
@@ -147,6 +159,7 @@ class CommandLockSubscriber implements EventSubscriberInterface
      * Configure the lockname input.
      *
      * @param ConsoleCommandEvent|ConsoleTerminateEvent|ConsoleExceptionEvent $event
+     *
      * @return bool
      */
     protected function configInput($event)
@@ -176,6 +189,7 @@ class CommandLockSubscriber implements EventSubscriberInterface
 
     /**
      * Handle exception
+     *
      * @param ConsoleCommandEvent $event
      */
     protected function outputSetupException(ConsoleCommandEvent $event)
@@ -205,7 +219,9 @@ class CommandLockSubscriber implements EventSubscriberInterface
 
     /**
      * Get the lockname
-     * @param ConsoleTerminateEvent $event
+     *
+     * @param ConsoleTerminateEvent|ConsoleExceptionEvent $event
+     *
      * @return string
      */
     public function getLockname($event)
@@ -218,16 +234,23 @@ class CommandLockSubscriber implements EventSubscriberInterface
     /**
      * @param ConsoleExceptionEvent $event
      */
-    public function sendErrorMail(ConsoleExceptionEvent $event)
+    public function sendErrorEmail(ConsoleExceptionEvent $event)
     {
         $lockName = $this->getLockname($event);
 
         if (strlen($lockName) > 0) {
+            $output = $event->getOutput();
+
+            if ($output instanceof TerminalOutput) {
+                $terminalLog = $output->getTerminalLog();
+            } else {
+                $terminalLog = new TerminalLog();
+                $terminalLog->setLog('Undefined.');
+            }
+
             $commandLock = $this->commandLockManager->get($lockName);
 
-            if (true === $commandLock->getNotifyOnError()) {
-
-            }
+            $this->emailManager->sendErrorEmail($commandLock, $terminalLog);
         }
     }
 }

@@ -7,8 +7,8 @@
 
 set_time_limit(0);
 
-require_once __DIR__ . '/../app/bootstrap.php.cache';
-require_once __DIR__ . '/../app/AppKernel.php';
+require_once __DIR__ . '/../../../../../../app/bootstrap.php.cache';
+require_once __DIR__ . '/../../../../../../app/AppKernel.php';
 
 use EXS\TerminalBundle\Services\Output\TerminalOutput;
 use Symfony\Bundle\FrameworkBundle\Console\Application;

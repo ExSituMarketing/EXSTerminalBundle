@@ -25,19 +25,6 @@ class OutputManager extends ContainerAware
     private $managerRegistry;
 
     /**
-     * @var array
-     */
-    private $emailParameters;
-
-    /**
-     * @param array $emailParameters
-     */
-    public function __construct(array $emailParameters)
-    {
-        $this->emailParameters = $emailParameters;
-    }
-
-    /**
      * Sets the ManagerRegistry.
      *
      * @param ManagerRegistry $managerRegistry
@@ -77,65 +64,5 @@ class OutputManager extends ContainerAware
         $entityManager = $this->managerRegistry->getManagerForClass('EXS\TerminalBundle\Entity\TerminalLog');
         $entityManager->persist($terminalLog);
         $entityManager->flush($terminalLog);
-
-        if ($terminalLog->isHasError()) {
-            $this->sendMail($terminalLog);
-        }
-    }
-
-    /**
-     * Sends an email.
-     *
-     * @param TerminalLog $terminalLog
-     */
-    protected function sendMail(TerminalLog $terminalLog)
-    {
-        try {
-            //get associated log.
-            /** @var CommandLockRepository $commandLockRepo */
-            $commandLockRepo = $this->managerRegistry->getRepository('EXSTerminalBundle:CommandLock');
-
-            if (strlen($terminalLog->getLockName()) > 0) {
-                $commandLock = $commandLockRepo->getCommandLockByName($terminalLog->getLockName());
-            } else {
-                $commandLock = new CommandLock();
-                $commandLock->setLockName('NoLockNameError');
-            }
-
-            if (false === $commandLock->getNotifyOnError()) {
-                return;
-            }
-
-            //build the message.
-            $message = \Swift_Message::newInstance()
-                ->setSubject(sprintf(
-                    '%s %s',
-                    $this->emailParameters['subject'],
-                    $commandLock->getLockName()
-                ))
-                ->setFrom($this->emailParameters['from'])
-                ->setTo($this->emailParameters['to'])
-                ->setBody($this->container->get('templating')->render(
-                    'EXSTerminalBundle:Email:onConsoleException.txt.twig',
-                    array(
-                        'command' => $commandLock,
-                        'log' => $terminalLog,
-                    )
-                ));
-
-            /** @var \Swift_Mailer $mailer */
-            $mailer = $this->container->get('mailer');
-
-            //send the message.
-            $mailer->send($message);
-
-            // Flush the spool explicitely
-            $spool = $mailer->getTransport()->getSpool();
-            $transport = $this->container->get('swiftmailer.transport.real');
-            $spool->flushQueue($transport);
-        } catch (\Exception $e) {
-            //prevent looping.
-            $this->container->get('exs.exception_listener')->onAnyException($e);
-        }
     }
 }

@@ -34,7 +34,7 @@ class SleepCommand extends ContainerAwareCommand
     {
         $output->writeln('Falling asleep...');
 
-        sleep(5);
+        sleep(60);
 
         $output->writeln('Wake up!');
     }

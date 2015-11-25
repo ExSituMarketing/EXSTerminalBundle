@@ -31,9 +31,9 @@ class CommandLockRepository extends EntityRepository
         try {
             return $this
                 ->createQueryBuilder('l')
-                ->where('c.lockName = :c_lockName')
+                ->where('l.lockName = :l_lockName')
                 ->setMaxResults(1)
-                ->setParameter(':c_lockName', $lockName)
+                ->setParameter(':l_lockName', $lockName)
                 ->getQuery()
                 ->getSingleResult()
             ;
