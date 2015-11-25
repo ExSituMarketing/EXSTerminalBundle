@@ -1,5 +1,5 @@
 parameters:
-    terminal.email.manager.class: EXS\TerminalBundle\Services\Subscribers\EmailManager
+    terminal.email.manager.class: EXS\TerminalBundle\Services\Managers\EmailManager
     terminal.commandlock.subscriber.class: EXS\TerminalBundle\Services\Subscribers\CommandLockSubscriber
     terminal.commandlock.manager.class: EXS\TerminalBundle\Services\Managers\CommandLockManager
     terminal.commandlock.repository.class: EXS\TerminalBundle\Entity\Repository\CommandLockRepository
