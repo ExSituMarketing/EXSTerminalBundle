@@ -3,7 +3,6 @@
 namespace EXS\TerminalBundle\Services\Managers;
 
 use EXS\TerminalBundle\Entity\CommandLock;
-use EXS\TerminalBundle\Entity\TerminalLog;
 use Symfony\Bundle\TwigBundle\TwigEngine;
 
 /**
@@ -43,11 +42,11 @@ class EmailManager
 
     /**
      * @param CommandLock $commandLock
-     * @param TerminalLog $terminalLog
+     * @param \Exception  $exception
      *
      * @return bool|null
      */
-    public function sendErrorEmail(CommandLock $commandLock, TerminalLog $terminalLog)
+    public function sendErrorEmail(CommandLock $commandLock, \Exception $exception)
     {
         try {
             $message = \Swift_Message::newInstance()
@@ -62,7 +61,7 @@ class EmailManager
                     'EXSTerminalBundle:Email:onConsoleException.txt.twig',
                     array(
                         'command' => $commandLock,
-                        'log' => $terminalLog,
+                        'exception' => $exception,
                     )
                 ))
             ;

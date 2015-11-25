@@ -1,9 +1,10 @@
-The system returned an error with the lock "{{ command.lockName }}" at
+An error occured while running "{{ command.lockName }}" command (id: {{ command.id }}).
 
-CommandLock:id {{ command.id }}
-
-TerminalLog:id {{ log.id }}
-
-Ouput :
+Exception: "{{ exception.message }}"
+Code: {{ exception.code }}
+File: {{ exception.file }}
+Line: {{ exception.line }}
 ==========================
-{{ log.log }}
+
+Trace:
+{{ exception.traceAsString }}
