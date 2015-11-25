@@ -1,6 +1,6 @@
 <?php
 
-namespace EXS\TerminalBundle\Services\Listeners;
+namespace  EXS\TerminalBundle\Services\Listeners;
 
 use Doctrine\DBAL\DBALException;
 use EXS\TerminalBundle\Exception\CommandAlreadyRunningException;

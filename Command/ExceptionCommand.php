@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @author    Charles Weiss & Mathieu Delisle
  * @copyright Copyright 2015 ExSitu Marketing.
  */
-class SleepCommand extends ContainerAwareCommand
+class ExceptionCommand extends ContainerAwareCommand
 {
     /**
      * {@inheritdoc}
@@ -21,9 +21,9 @@ class SleepCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('terminal:test:sleep')
-            ->setDescription('Just container for test.')
-            ->setHelp('Just container for test.')
+            ->setName('terminal:test:exception')
+            ->setDescription('Dummy command that throw an exception.')
+            ->setHelp('Dummy command that throw an exception.')
         ;
     }
 
@@ -32,10 +32,8 @@ class SleepCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Falling asleep...');
+        $output->writeln('For now everything is alright...');
 
-        sleep(5);
-
-        $output->writeln('Wake up!');
+        throw new \Exception('Oh my god! Something horrible arrived!');
     }
 }
