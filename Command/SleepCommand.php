@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Sample command to manually test locks.
  *
- * @created   03/26/2015
+ * Created    03/26/2015
  * @author    Charles Weiss & Mathieu Delisle
  * @copyright Copyright 2015 ExSitu Marketing.
  */

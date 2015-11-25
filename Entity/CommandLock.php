@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CommandLock class.
  *
- * @created   03/26/2015
+ * Created    03/26/2015
  * @author    Charles Weiss & Mathieu Delisle
  * @copyright Copyright 2015 ExSitu Marketing.
  *

@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 /**
  * OutputManager processes console output (including traditional).
  *
- * @created   03/26/2015
+ * Created    03/26/2015
  * @author    Charles Weiss & Mathieu Delisle
  * @copyright Copyright 2015 ExSitu Marketing.
  */

@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Listens for lock parameters in console commands.
  * Prevents the same command from running concurrently.
  *
- * @created   03/26/2015
+ * Created    03/26/2015
  * @author    Charles Weiss & Mathieu Delisle
  * @copyright Copyright 2015 ExSitu Marketing.
  */
