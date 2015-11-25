@@ -29,7 +29,6 @@ services:
 
     terminal.output.subscriber:
         class: %terminal.output.subscriber.class%
-        arguments: [ @terminal.output.manager ]
         tags:
             - { name: kernel.event_subscriber }
 

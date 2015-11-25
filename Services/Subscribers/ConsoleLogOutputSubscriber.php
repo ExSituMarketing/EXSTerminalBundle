@@ -22,22 +22,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ConsoleLogOutputSubscriber implements EventSubscriberInterface
 {
     /**
-     * The output manager
-     * @var OutputManager
-     */
-    protected $outputManager;
-
-    /**
-     * Constructor
-     *
-     * @param OutputManager     $outputManager
-     */
-    public function __construct(OutputManager $outputManager)
-    {
-        $this->outputManager = $outputManager;
-    }
-
-    /**
      * Register event subscriber method.
      *
      * @return array
