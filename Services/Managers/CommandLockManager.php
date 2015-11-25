@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use EXS\TerminalBundle\Entity\CommandLock;
 use EXS\TerminalBundle\Entity\Repository\CommandLockRepository;
 use EXS\TerminalBundle\Exception\CommandIsInterruptedException;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Handles the actual writing to logs
@@ -17,13 +18,11 @@ use EXS\TerminalBundle\Exception\CommandIsInterruptedException;
 class CommandLockManager
 {
     /**
-     * The repo
      * @var CommandLockRepository
      */
     protected $commandLockRepository;
 
     /**
-     * The entity manager
      * @var EntityManager
      */
     protected $entityManager;
@@ -31,12 +30,12 @@ class CommandLockManager
     /**
      * Constructor
      *
-     * @param EntityManager         $entityManager
+     * @param ManagerRegistry       $managerRegistry
      * @param CommandLockRepository $commandLockRepository
      */
-    public function __construct(EntityManager $entityManager, CommandLockRepository $commandLockRepository)
+    public function __construct(ManagerRegistry $managerRegistry, CommandLockRepository $commandLockRepository)
     {
-        $this->entityManager = $entityManager;
+        $this->entityManager = $managerRegistry->getManagerForClass('EXS\TerminalBundle\Entity\CommandLock');
         $this->commandLockRepository = $commandLockRepository;
     }
 
@@ -44,6 +43,7 @@ class CommandLockManager
      * Get CommandLock by name.
      *
      * @param $name
+     *
      * @return CommandLock
      */
     public function get($name)

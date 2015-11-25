@@ -6,7 +6,6 @@ use Doctrine\DBAL\DBALException;
 use EXS\TerminalBundle\Exception\CommandAlreadyRunningException;
 use EXS\TerminalBundle\Exception\CommandIsDisabledException;
 use EXS\TerminalBundle\Services\Managers\CommandLockManager;
-use EXS\ErrorBundle\Services\Listeners\ExceptionListener;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleExceptionEvent;
@@ -32,21 +31,13 @@ class CommandLockSubscriber implements EventSubscriberInterface
     protected $commandLockManager;
 
     /**
-     * The exception listener from the error bundle
-     * @var ExceptionListener
-     */
-    protected $exceptionListener;
-
-    /**
      * Constructor.
      *
      * @param CommandLockManager $commandLockManager
-     * @param ExceptionListener  $exceptionListener
      */
-    public function __construct(CommandLockManager $commandLockManager, ExceptionListener $exceptionListener)
+    public function __construct(CommandLockManager $commandLockManager)
     {
         $this->commandLockManager = $commandLockManager;
-        $this->exceptionListener = $exceptionListener;
     }
 
     /**
@@ -103,9 +94,6 @@ class CommandLockSubscriber implements EventSubscriberInterface
             } catch (\PDOException $e) {
                 $this->outputSetupException($event);
             } catch (\Exception $e) {
-                //log any other exception.
-                $this->exceptionListener->onAnyException($e);
-
                 //lets the system handle the exception.
                 throw $e;
             }

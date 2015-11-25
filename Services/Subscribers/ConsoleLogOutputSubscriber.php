@@ -5,7 +5,6 @@ namespace EXS\TerminalBundle\Services\Subscribers;
 use Doctrine\DBAL\DBALException;
 use EXS\TerminalBundle\Services\Output\TerminalOutput;
 use EXS\TerminalBundle\Services\Managers\OutputManager;
-use EXS\ErrorBundle\Services\Listeners\ExceptionListener;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleExceptionEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
@@ -23,13 +22,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class ConsoleLogOutputSubscriber implements EventSubscriberInterface
 {
     /**
-     * The exception listener.
-     *
-     * @var ExceptionListener
-     */
-    protected $exceptionListener;
-
-    /**
      * The output manager
      * @var OutputManager
      */
@@ -39,12 +31,10 @@ class ConsoleLogOutputSubscriber implements EventSubscriberInterface
      * Constructor
      *
      * @param OutputManager     $outputManager
-     * @param ExceptionListener $exceptionListener
      */
-    public function __construct(OutputManager $outputManager, ExceptionListener $exceptionListener)
+    public function __construct(OutputManager $outputManager)
     {
         $this->outputManager = $outputManager;
-        $this->exceptionListener = $exceptionListener;
     }
 
     /**
@@ -132,11 +122,10 @@ class ConsoleLogOutputSubscriber implements EventSubscriberInterface
             $event->getOutput()->writeln(
                 "To avoid this error message please update your Entities with Doctrine:Schema:Update to continue."
             );
-            $this->exceptionListener->onAnyException($e);
-        } catch (\Exception $e) {
-            //log any other exception.
-            $this->exceptionListener->onAnyException($e);
 
+            //lets the system handle the exception.
+            throw $e;
+        } catch (\Exception $e) {
             //lets the system handle the exception.
             throw $e;
         }

@@ -5,8 +5,8 @@ namespace EXS\TerminalBundle\Services\Managers;
 use EXS\TerminalBundle\Entity\CommandLock;
 use EXS\TerminalBundle\Entity\Repository\CommandLockRepository;
 use EXS\TerminalBundle\Entity\TerminalLog;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAware;
-use Doctrine\ORM\EntityManager;
 
 /**
  * OutputManager processes console output (including traditional).
@@ -20,9 +20,9 @@ class OutputManager extends ContainerAware
     /**
      * The entity manager
      *
-     * @var EntityManager
+     * @var ManagerRegistry
      */
-    protected $EntityManager;
+    private $managerRegistry;
 
     /**
      * @var array
@@ -38,12 +38,13 @@ class OutputManager extends ContainerAware
     }
 
     /**
-     * Setter for the em
-     * @param EntityManager $EntityManager
+     * Sets the ManagerRegistry.
+     *
+     * @param ManagerRegistry $managerRegistry
      */
-    public function setManager(EntityManager $EntityManager)
+    public function setManagerRegistry(ManagerRegistry $managerRegistry)
     {
-        $this->EntityManager = $EntityManager;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -54,6 +55,7 @@ class OutputManager extends ContainerAware
     {
         $log = new TerminalLog();
         $log->setPid(getmypid());
+
         return $log;
     }
 
@@ -65,14 +67,16 @@ class OutputManager extends ContainerAware
     public function save(TerminalLog $terminalLog)
     {
         $terminalLog->setCreated(new \DateTime());
+
         if (strlen($terminalLog->getLockName()) == 0) {
             // when have some runtime exception, event subscriber are not hit and lockName is not set.
             // if lockName is not set. its an error and should flag it.
             $terminalLog->setHasError(true);
         }
 
-        $this->EntityManager->persist($terminalLog);
-        $this->EntityManager->flush($terminalLog);
+        $entityManager = $this->managerRegistry->getManagerForClass('EXS\TerminalBundle\Entity\TerminalLog');
+        $entityManager->persist($terminalLog);
+        $entityManager->flush($terminalLog);
 
         if ($terminalLog->isHasError()) {
             $this->sendMail($terminalLog);
@@ -89,7 +93,8 @@ class OutputManager extends ContainerAware
         try {
             //get associated log.
             /** @var CommandLockRepository $commandLockRepo */
-            $commandLockRepo = $this->EntityManager->getRepository('EXSTerminalBundle:CommandLock');
+            $commandLockRepo = $this->managerRegistry->getRepository('EXSTerminalBundle:CommandLock');
+
             if (strlen($terminalLog->getLockName()) > 0) {
                 $commandLock = $commandLockRepo->getCommandLockByName($terminalLog->getLockName());
             } else {

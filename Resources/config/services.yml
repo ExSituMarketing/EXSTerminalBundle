@@ -8,13 +8,13 @@ parameters:
 services:
     terminal.commandlock.subscriber:
         class: %terminal.commandlock.subscriber.class%
-        arguments: [ @terminal.commandlock.manager, @exs.exception_subscriber ]
+        arguments: [ @terminal.commandlock.manager ]
         tags:
             - { name: kernel.event_subscriber }
 
     terminal.commandlock.manager:
         class: %terminal.commandlock.manager.class%
-        arguments: [ @doctrine.orm.entity_manager, @terminal.commandlock.repository ]
+        arguments: [ @doctrine, @terminal.commandlock.repository ]
 
     terminal.commandlock.repository:
         class: %terminal.commandlock.repository.class%
@@ -24,7 +24,7 @@ services:
 
     terminal.output.subscriber:
         class: %terminal.output.subscriber.class%
-        arguments: [ @terminal.output.manager, @exs.exception_subscriber ]
+        arguments: [ @terminal.output.manager ]
         tags:
             - { name: kernel.event_subscriber }
 
@@ -33,4 +33,4 @@ services:
         arguments: [ %exs_terminal.email% ]
         calls:
             - [ 'setContainer', [ @service_container ] ]
-            - [ 'setManager', [ @doctrine.orm.entity_manager ] ]
+            - [ 'setManagerRegistry', [ @doctrine ] ]
