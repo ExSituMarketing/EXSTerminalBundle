@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author    Charles Weiss & Mathieu Delisle
  * @copyright Copyright 2015 ExSitu Marketing.
  *
- * @ORM\Table(name="TerminalLog")
+ * @ORM\Table(name="terminallogs")
  * @ORM\Entity()
  */
 class TerminalLog
