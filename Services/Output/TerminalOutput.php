@@ -67,7 +67,7 @@ class TerminalOutput extends StreamOutput implements ConsoleOutputInterface
 
         parent::__construct($outputStream, $verbosity, $decorated, $formatter);
 
-        register_shutdown_function(array($this, 'closeStream'), $lockName);
+        register_shutdown_function(array($this, 'closeStream'));
     }
 
     /**
