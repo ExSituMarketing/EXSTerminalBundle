@@ -26,5 +26,6 @@ class EXSTerminalExtension extends Extension
         $loader->load('services.yml');
 
         $container->setParameter('exs_terminal.email', $config['email']);
+        $container->setParameter('exs_terminal.transport', $config['transport']);
     }
 }

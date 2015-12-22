@@ -39,6 +39,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('transport')
+                    ->defaultValue('@swiftmailer.transport.real')
+                ->end()
             ->end()
         ;
 

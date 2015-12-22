@@ -29,8 +29,12 @@ class ConsoleLogOutputSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            ConsoleEvents::EXCEPTION => array('onConsoleCommandException', 9999),
-            ConsoleEvents::TERMINATE => array('onConsoleCommandTerminate', 9999),
+            ConsoleEvents::EXCEPTION => array(
+                array('onConsoleCommandException', 9999),
+            ),
+            ConsoleEvents::TERMINATE => array(
+                array('onConsoleCommandTerminate', 9999),
+            ),
         );
     }
 
@@ -88,9 +92,11 @@ class ConsoleLogOutputSubscriber implements EventSubscriberInterface
             if ($output instanceof TerminalOutput) {
                 //find the process name.
                 $command = $this->getInput($event);
+
                 if ($command->hasOption('lockname')) {
                     $lockName = $this->getInput($event)->getOption('lockname');
                 }
+
                 if (strlen($lockName) == 0) {
                     $lockName = $event->getCommand()->getName();
                 }

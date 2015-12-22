@@ -9,7 +9,7 @@ parameters:
 services:
     terminal.email.manager:
         class: %terminal.email.manager.class%
-        arguments: [ @templating, @mailer, %exs_terminal.email% ]
+        arguments: [ @templating, @mailer, "@=service(%exs_terminal.transport%)", %exs_terminal.email% ]
 
     terminal.commandlock.subscriber:
         class: %terminal.commandlock.subscriber.class%

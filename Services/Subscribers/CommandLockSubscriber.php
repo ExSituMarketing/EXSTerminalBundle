@@ -3,12 +3,10 @@
 namespace EXS\TerminalBundle\Services\Subscribers;
 
 use Doctrine\DBAL\DBALException;
-use EXS\TerminalBundle\Entity\TerminalLog;
 use EXS\TerminalBundle\Exception\CommandAlreadyRunningException;
 use EXS\TerminalBundle\Exception\CommandIsDisabledException;
 use EXS\TerminalBundle\Services\Managers\CommandLockManager;
 use EXS\TerminalBundle\Services\Managers\EmailManager;
-use EXS\TerminalBundle\Services\Output\TerminalOutput;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleExceptionEvent;
@@ -17,7 +15,7 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/*
+/**
  * Listens for lock parameters in console commands.
  * Prevents the same command from running concurrently.
  *
@@ -57,12 +55,16 @@ class CommandLockSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            ConsoleEvents::COMMAND => array('onConsoleCommand', 1024),
+            ConsoleEvents::COMMAND => array(
+                array('onConsoleCommand', 1024),
+            ),
             ConsoleEvents::EXCEPTION => array(
                 array('onConsoleCommandException', 1000),
                 array('sendErrorEmail', 500),
             ),
-            ConsoleEvents::TERMINATE => array('onConsoleCommandTerminate', 1000),
+            ConsoleEvents::TERMINATE => array(
+                array('onConsoleCommandTerminate', 1000),
+            ),
         );
     }
 
@@ -122,6 +124,7 @@ class CommandLockSubscriber implements EventSubscriberInterface
             $commandLock = $this->commandLockManager->get($lockName);
             $commandLock->setHasError(true);
             $commandLock->setLastError(new \DateTime());
+
             $this->commandLockManager->save($commandLock);
         }
     }
@@ -136,21 +139,10 @@ class CommandLockSubscriber implements EventSubscriberInterface
         $lockName = $this->getLockname($event);
 
         if (strlen($lockName) > 0) {
-            register_shutdown_function(array($this, 'shutDownOnConsoleCommandterminate'), $lockName);
-        }
-    }
-
-    /**
-     * Close the lock gracefully
-     *
-     * @param string $lockName
-     */
-    public function shutDownOnConsoleCommandterminate($lockName)
-    {
-        if (strlen($lockName) > 0) {
             $commandLock = $this->commandLockManager->get($lockName);
             $commandLock->setCurrentPid(0);
             $commandLock->setLockedSince(new \DateTime('0000-00-00 00:00:00'));
+
             $this->commandLockManager->save($commandLock, false);
         }
     }
@@ -166,12 +158,10 @@ class CommandLockSubscriber implements EventSubscriberInterface
     {
         $inputDefinition = $event->getCommand()->getApplication()->getDefinition();
 
-        //create input definition for the lockname.
-        $inputDefinition->addOption(
-            new InputOption(
+        // create input definition for the lockname.
+        $inputDefinition->addOption(new InputOption(
             'lock', 'l', InputOption::VALUE_OPTIONAL, 'Specify whether to lock this command.', null
-            )
-        );
+        ));
 
         // merge the application's input definition
         $event->getCommand()->mergeApplicationDefinition();
@@ -195,9 +185,9 @@ class CommandLockSubscriber implements EventSubscriberInterface
     protected function outputSetupException(ConsoleCommandEvent $event)
     {
         //TerminalBundle is not fully setup. Is it normal to get this error on installation.
-        $event->getOutput()->writeln("<error>TerminalBundle is not setup properly.</error>");
+        $event->getOutput()->writeln('<error>TerminalBundle is not setup properly.</error>');
         $event->getOutput()->writeln(
-            "To avoid this error message please update your Entities with Doctrine:Schema:Update to continue."
+            'To avoid this error message please update your Entities with Doctrine:Schema:Update to continue.'
         );
     }
 
