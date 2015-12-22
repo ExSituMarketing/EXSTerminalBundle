@@ -139,6 +139,22 @@ class CommandLockSubscriber implements EventSubscriberInterface
         $lockName = $this->getLockname($event);
 
         if (strlen($lockName) > 0) {
+            /*
+             * In sf 2.4, 2.5 and 2.6 Terminate is before Exception.
+             * Need to do this to be sure it is executed in the end.
+             */
+            register_shutdown_function(array($this, 'shutDownOnConsoleCommandterminate'), $lockName);
+        }
+    }
+
+    /**
+     * Close the lock gracefully.
+     *
+     * @param string $lockName
+     */
+    public function shutDownOnConsoleCommandterminate($lockName)
+    {
+        if (strlen($lockName) > 0) {
             $commandLock = $this->commandLockManager->get($lockName);
             $commandLock->setCurrentPid(0);
             $commandLock->setLockedSince(new \DateTime('0000-00-00 00:00:00'));

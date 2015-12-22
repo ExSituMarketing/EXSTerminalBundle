@@ -66,6 +66,8 @@ class TerminalOutput extends StreamOutput implements ConsoleOutputInterface
         $this->terminalLog = $outputManager->createLog();
 
         parent::__construct($outputStream, $verbosity, $decorated, $formatter);
+
+        register_shutdown_function(array($this, 'closeStream'), $lockName);
     }
 
     /**
@@ -92,10 +94,16 @@ class TerminalOutput extends StreamOutput implements ConsoleOutputInterface
         while (!feof($stream)) {
             $output = fread($stream, 4096);
         }
-        fclose($stream);
+
         $this->terminalLog->setLog($output);
         $this->terminalLog->setHasError($exitCode);
         $this->outputManager->save($this->terminalLog);
+    }
+
+    public function closeStream()
+    {
+        $stream = $this->getStream();
+        fclose($stream);
     }
 
     /**
