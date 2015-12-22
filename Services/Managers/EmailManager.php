@@ -23,6 +23,11 @@ class EmailManager
     private $mailer;
 
     /**
+     * @var \Swift_Transport
+     */
+    private $transport;
+
+    /**
      * @var array
      */
     private $parameters;
@@ -30,13 +35,16 @@ class EmailManager
     /**
      * Constructor.
      *
-     * @param TwigEngine    $templating
-     * @param \Swift_Mailer $mailer
+     * @param TwigEngine       $templating
+     * @param \Swift_Mailer    $mailer
+     * @param \Swift_Transport $transport
+     * @param array            $parameters
      */
-    public function __construct(TwigEngine $templating, \Swift_Mailer $mailer, array $parameters)
+    public function __construct(TwigEngine $templating, \Swift_Mailer $mailer, \Swift_Transport $transport, array $parameters)
     {
         $this->templating = $templating;
         $this->mailer = $mailer;
+        $this->transport = $transport;
         $this->parameters = $parameters;
     }
 
@@ -67,6 +75,9 @@ class EmailManager
             ;
 
             $sent = $this->mailer->send($message);
+
+            $spool = $this->mailer->getTransport()->getSpool();
+            $spool->flushQueue($this->transport);
 
             return (0 < $sent);
         } catch (\Exception $e) {

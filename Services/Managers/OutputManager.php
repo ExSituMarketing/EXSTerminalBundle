@@ -58,6 +58,7 @@ class OutputManager extends ContainerAware
         if (strlen($terminalLog->getLockName()) == 0) {
             // when have some runtime exception, event subscriber are not hit and lockName is not set.
             // if lockName is not set. its an error and should flag it.
+            $terminalLog->setLockName('Undefined');
             $terminalLog->setHasError(true);
         }
 
