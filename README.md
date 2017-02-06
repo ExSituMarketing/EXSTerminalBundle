@@ -57,6 +57,7 @@ exs_terminal:
         subject: Subject
 ```
 You have to manually update the db with doctrine:schema:update console command.
+
 Migrations won't work because they need the table that they're going to create...
 ``` shell
 php app/console cache:clear
