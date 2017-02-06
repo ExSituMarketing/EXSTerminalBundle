@@ -187,8 +187,8 @@ class CommandLockSubscriber implements EventSubscriberInterface
         // we use the input definition of the command
         $input->bind($event->getCommand()->getDefinition());
 
-	// Is the input locked
-        $isLocked = true;
+        // Is the input locked
+        $isLocked = false;
         if ($input->hasOption('lock')) {
             $isLocked = (bool) $input->getOption('lock');
         }
