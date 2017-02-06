@@ -48,7 +48,7 @@ Update the app/AppKernel.php and app/config/routing.yml to include our bundle, c
 ```
 
 ```
-#app/config/comnfig.yml
+#app/config/config.yml
 #...
 exs_terminal:
     email:
@@ -56,7 +56,8 @@ exs_terminal:
         to: to@test.tld
         subject: Subject
 ```
-
+You have to manually update the db with doctrine:schema:update console command.
+Migrations won't work because they need the table that they're going to create...
 ``` shell
 php app/console cache:clear
 php app/console doctrine:schema:update --force
@@ -67,7 +68,18 @@ That adds the hooks into the original console script without altering the origin
 ```
 cp vendor/exs/terminal-bundle/EXS/TerminalBundle/runner app/runner
 ```
-
+Make sure you're mailer is properly configurated in config.yml and in parameters.yml:
+```
+#app/config/config.yml
+#...
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    spool:     { type: memory }
+```
 
 and now you're done.
 
